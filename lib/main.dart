@@ -385,7 +385,7 @@ class AnalogClockPainter extends CustomPainter {
   void _drawSecondHand(Canvas canvas, Offset center, double length, double angle) {
     final paint = Paint()
       ..color = const Color(0xFFe0524c)
-      ..strokeWidth = 1
+      ..strokeWidth = 1  // 1px宽
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     
@@ -396,9 +396,15 @@ class AnalogClockPainter extends CustomPainter {
     
     canvas.drawLine(center, endPoint, paint);
     
-    // 末端红色圆点
+    // 末端红色圆点 (8px直径, 在top:30px位置)
     final dotPaint = Paint()..color = const Color(0xFFe0524c);
-    canvas.drawCircle(endPoint, 4.5, dotPaint);
+    // 计算红点位置：从秒针末端往回30px
+    final dotOffset = 30.0;
+    final dotPoint = Offset(
+      endPoint.dx - dotOffset * sin(angle),
+      endPoint.dy + dotOffset * cos(angle),
+    );
+    canvas.drawCircle(dotPoint, 4, dotPaint);
   }
 
   @override
