@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>北京时间 - 模拟时钟</title>
+    <title>您的本地时间 - Analogue Clock</title>
     <style>
         * {
             margin: 0;
@@ -12,66 +12,87 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: #0a0a0c;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #ffffff;
             overflow: hidden;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        .container {
-            text-align: center;
-            padding: 20px;
-            max-height: 100vh;
+        .main-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            width: 100%;
+            max-width: 480px;
         }
 
-        .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            margin-bottom: 5px;
+        /* 顶部标题 */
+        .page-title {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 1px;
+            margin-bottom: 20px;
         }
 
-        .digital-time {
-            font-size: 3.5rem;
-            font-weight: bold;
-            letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-            font-variant-numeric: tabular-nums;
-            margin-bottom: 5px;
-        }
-
-        .clock-container {
+        /* 表盘外层容器 */
+        .clock-box {
             position: relative;
-            width: 350px;
-            height: 350px;
+            width: 320px;
+            height: 320px;
+            margin-bottom: 28px;
         }
 
         .clock-face {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle at center, #2c3e50 0%, #1a1a2e 100%);
-            border: 8px solid #d4af37;
-            box-shadow: 
-                0 0 50px rgba(212, 175, 55, 0.3),
-                inset 0 0 30px rgba(0, 0, 0, 0.5);
+            background: #0d0d10;
+            border: 2px solid #caa055;
+            box-shadow: 0 0 1px 1px rgba(202, 160, 85, 0.3);
             position: relative;
         }
 
-        .clock-number-slot {
+        /* 刻度线 */
+        .tick-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tick-item::before {
+            content: '';
+            display: block;
+            background: #caa055;
+            border-radius: 1px;
+        }
+
+        .tick-item.major::before {
+            width: 2.5px;
+            height: 10px;
+            margin-top: 5px;
+        }
+
+        .tick-item.minor::before {
+            width: 1px;
+            height: 5px;
+            margin-top: 5px;
+            opacity: 0.35;
+        }
+
+        /* 表盘数字 */
+        .number-slot {
             position: absolute;
             top: 0;
             left: 0;
@@ -80,165 +101,201 @@
             text-align: center;
         }
 
-        .clock-number {
+        .number-text {
             display: inline-block;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 12px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 22px;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
+        /* 指针统一样式 */
         .hand {
             position: absolute;
             bottom: 50%;
             left: 50%;
             transform-origin: bottom center;
-            border-radius: 4px;
             z-index: 10;
         }
 
+        /* 时针 */
         .hour-hand {
-            width: 8px;
-            height: 26%;
-            background: #fff;
-            margin-left: -4px;
+            width: 7px;
+            height: 78px;
+            background: #f1ebd9;
+            border-radius: 4px;
+            margin-left: -3.5px;
+            margin-bottom: -10px;
+            transform-origin: center calc(100% - 10px);
         }
 
+        /* 分针 */
         .minute-hand {
-            width: 6px;
-            height: 36%;
-            background: #fff;
-            margin-left: -3px;
+            width: 5px;
+            height: 118px;
+            background: #f1ebd9;
+            border-radius: 3px;
+            margin-left: -2.5px;
+            margin-bottom: -15px;
+            transform-origin: center calc(100% - 15px);
         }
 
+        /* 秒针与初端小球 */
         .second-hand {
-            width: 3px;
-            height: 42%;
-            background: #ff6b6b;
-            margin-left: -1.5px;
+            width: 2px;
+            height: 148px;
+            background: #e0524c;
+            margin-left: -1px;
+            margin-bottom: -32px;
+            transform-origin: center calc(100% - 32px);
+            z-index: 12;
         }
 
-        .center-dot {
+        .second-hand::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 9px;
+            height: 9px;
+            background: #e0524c;
+            border-radius: 50%;
+        }
+
+        /* 中心金属铆钉 */
+        .center-cap-outer {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 16px;
-            height: 16px;
-            background: #d4af37;
+            width: 15px;
+            height: 15px;
+            background: #caa055;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             z-index: 20;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-        }
-
-        .brand-text {
-            position: absolute;
-            top: 65%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            letter-spacing: 3px;
-            color: rgba(255, 255, 255, 0.5);
-            text-transform: uppercase;
-            max-width: 80%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .info-group {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 2px;
         }
 
+        .center-cap-inner {
+            width: 5px;
+            height: 5px;
+            background: #0d0d10;
+            border-radius: 50%;
+        }
+
+        /* 表盘中心品牌印记 */
+        .brand-label {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.72rem;
+            letter-spacing: 3.5px;
+            color: rgba(255, 255, 255, 0.12);
+            font-family: "Times New Roman", Times, serif;
+            text-transform: uppercase;
+            width: 80%;
+            text-align: center;
+            user-select: none;
+        }
+
+        /* 底部数字时间 */
+        .digital-clock {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #ffffff;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 日期与星期 */
+        .date-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.38);
+            letter-spacing: 0.5px;
+        }
+
+        /* 悬浮设置控制按钮 */
         .fullscreen-btn {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.4);
+            transition: all 0.2s ease;
         }
 
         .fullscreen-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
         }
 
-        .fullscreen-icon {
-            width: 20px;
-            height: 20px;
-            stroke: #fff;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .settings-container {
+        .settings-wrapper {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 100;
         }
 
-        .settings-toggle-btn {
+        .settings-toggle {
             width: 28px;
             height: 28px;
             border-radius: 50%;
             background: transparent;
             border: none;
-            color: rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.2);
             font-size: 16px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+            transition: color 0.2s;
         }
 
-        .settings-toggle-btn:hover {
+        .settings-toggle:hover {
             color: rgba(255, 255, 255, 0.8);
-            background: rgba(255, 255, 255, 0.1);
         }
 
-        .settings-panel {
+        .settings-card {
             position: absolute;
             bottom: 36px;
             right: 0;
-            background: rgba(22, 33, 62, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #15161b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 12px 16px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             opacity: 0;
             pointer-events: none;
             transform: translateY(8px);
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             white-space: nowrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .settings-panel.active {
+        .settings-card.active {
             opacity: 1;
             pointer-events: auto;
             transform: translateY(0);
         }
 
-        .toggle-item {
+        .control-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -246,209 +303,232 @@
             font-size: 0.85rem;
             color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            user-select: none;
         }
 
-        .toggle-item input[type="checkbox"] {
-            cursor: pointer;
-            accent-color: #d4af37;
-            width: 15px;
-            height: 15px;
+        .control-row input[type="checkbox"] {
+            accent-color: #caa055;
         }
 
-        .brand-input-container {
+        .brand-input-box {
             display: flex;
             flex-direction: column;
             gap: 4px;
-            margin-top: 2px;
-            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            margin-top: 4px;
+            border-top: 1px stroke rgba(255, 255, 255, 0.1);
             padding-top: 8px;
         }
 
-        .brand-input-label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .brand-input {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .brand-input-box input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 4px;
             padding: 4px 8px;
             color: #fff;
             font-size: 0.8rem;
             outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .brand-input:focus {
-            border-color: #d4af37;
-            background: rgba(255, 255, 255, 0.12);
         }
 
         .is-hidden {
             display: none !important;
         }
 
-        @media (max-width: 768px) {
-            .title { font-size: 1.8rem; }
-            .digital-time { font-size: 2.5rem; }
-            .clock-container { width: 280px; height: 280px; }
-            .clock-number { font-size: 1.5rem; margin-top: 8px; }
-            .info-group { font-size: 1rem; }
+        @media (max-width: 360px) {
+            .clock-box {
+                width: 270px;
+                height: 270px;
+            }
+            .number-text {
+                font-size: 1.35rem;
+                margin-top: 18px;
+            }
+            .hour-hand { height: 65px; }
+            .minute-hand { height: 98px; }
+            .second-hand { height: 125px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">北京时间</h1>
-        <div class="digital-time" id="digitalTime">00:00:00</div>
-        <div class="clock-container" id="clockContainer">
+    <div class="main-wrapper">
+        <div class="page-title" id="pageTitle">您的本地时间</div>
+        
+        <div class="clock-box" id="clockBox">
             <div class="clock-face" id="clockFace">
-                <div class="brand-text" id="brandText">ANALOGUECLOCK</div>
+                <div class="brand-label" id="brandLabel">ANALOGUECLOCK</div>
+                
                 <div class="hand hour-hand" id="hourHand"></div>
                 <div class="hand minute-hand" id="minuteHand"></div>
                 <div class="hand second-hand" id="secondHand"></div>
-                <div class="center-dot"></div>
+                
+                <div class="center-cap-outer">
+                    <div class="center-cap-inner"></div>
+                </div>
             </div>
         </div>
-        <div class="info-group">
-            <div id="dateText">加载中...</div>
-            <div id="weekdayText"></div>
+
+        <div class="digital-clock" id="digitalClock">00:00</div>
+
+        <div class="date-info">
+            <span id="dateText">0000年0月0日</span>
+            <span id="weekdayText">星期一</span>
         </div>
     </div>
+
     <button class="fullscreen-btn" onclick="toggleFullscreen()" title="全屏">
-        <svg class="fullscreen-icon" viewBox="0 0 24 24">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
         </svg>
     </button>
-    <div class="settings-container">
-        <div class="settings-panel" id="settingsPanel">
-            <label class="toggle-item">
+
+    <div class="settings-wrapper">
+        <div class="settings-card" id="settingsCard">
+            <label class="control-row">
                 <span>数字时间</span>
-                <input type="checkbox" id="toggleDigital" checked onchange="toggleElement('digitalTime', this.checked)">
+                <input type="checkbox" id="chkDigital" checked onchange="toggleElement('digitalClock', this.checked)">
             </label>
-            <label class="toggle-item">
+            <label class="control-row">
                 <span>模拟表盘</span>
-                <input type="checkbox" id="toggleClock" checked onchange="toggleElement('clockContainer', this.checked)">
+                <input type="checkbox" id="chkClock" checked onchange="toggleElement('clockBox', this.checked)">
             </label>
-            <label class="toggle-item">
+            <label class="control-row">
                 <span>日期显示</span>
-                <input type="checkbox" id="toggleDate" checked onchange="toggleElement('dateText', this.checked)">
+                <input type="checkbox" id="chkDate" checked onchange="toggleElement('dateText', this.checked)">
             </label>
-            <label class="toggle-item">
+            <label class="control-row">
                 <span>星期显示</span>
-                <input type="checkbox" id="toggleWeekday" checked onchange="toggleElement('weekdayText', this.checked)">
+                <input type="checkbox" id="chkWeekday" checked onchange="toggleElement('weekdayText', this.checked)">
             </label>
-            <label class="toggle-item">
+            <label class="control-row">
                 <span>品牌标识</span>
-                <input type="checkbox" id="toggleBrand" checked onchange="toggleElement('brandText', this.checked)">
+                <input type="checkbox" id="chkBrand" checked onchange="toggleElement('brandLabel', this.checked)">
             </label>
-            <div class="brand-input-container">
-                <span class="brand-input-label">自定义品牌标识</span>
-                <input type="text" class="brand-input" id="brandInput" value="ANALOGUECLOCK" placeholder="输入品牌文字..." oninput="updateBrandText(this.value)">
+            <div class="brand-input-box">
+                <span style="font-size: 0.72rem; color: rgba(255,255,255,0.4);">自定义品牌名称</span>
+                <input type="text" id="brandInput" value="ANALOGUECLOCK" oninput="updateBrandText(this.value)">
             </div>
         </div>
-        <button class="settings-toggle-btn" onclick="toggleSettingsPanel(event)" title="设置">⚙</button>
+        <button class="settings-toggle" onclick="toggleSettings(event)">⚙</button>
     </div>
+
     <script>
-        function initClockNumbers() {
+        function buildClockFace() {
             const clockFace = document.getElementById('clockFace');
+
+            // 1. 生成 60 刻度线
+            for (let i = 0; i < 60; i++) {
+                const tick = document.createElement('div');
+                const isMajor = i % 5 === 0;
+                tick.className = `tick-item ${isMajor ? 'major' : 'minor'}`;
+                tick.style.transform = `rotate(${i * 6}deg)`;
+                clockFace.appendChild(tick);
+            }
+
+            // 2. 生成数字 1~12
             for (let i = 1; i <= 12; i++) {
                 const slot = document.createElement('div');
-                slot.className = 'clock-number-slot';
+                slot.className = 'number-slot';
                 const angle = i * 30;
-                slot.style.transform = otate(+angle+deg);
-                const number = document.createElement('div');
-                number.className = 'clock-number';
-                number.textContent = i;
-                number.style.transform = otate(-+angle+deg);
-                slot.appendChild(number);
+                slot.style.transform = `rotate(${angle}deg)`;
+                
+                const num = document.createElement('div');
+                num.className = 'number-text';
+                num.textContent = i;
+                num.style.transform = `rotate(${-angle}deg)`;
+                
+                slot.appendChild(num);
                 clockFace.appendChild(slot);
             }
         }
-        function updateClock() {
+
+        function renderClock() {
             const now = new Date();
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
-            const milliseconds = now.getMilliseconds();
-            const hourAngle = ((hours % 12) * 30) + (minutes * 0.5);
-            const minuteAngle = (minutes * 6) + (seconds * 0.1);
-            const secondAngle = (seconds * 6) + (milliseconds * 0.006);
-            document.getElementById('hourHand').style.transform = otate(+hourAngle+deg);
-            document.getElementById('minuteHand').style.transform = otate(+minuteAngle+deg);
-            document.getElementById('secondHand').style.transform = otate(+secondAngle+deg);
-            const timeString = String(hours).padStart(2, '0')+:+String(minutes).padStart(2, '0')+:+String(seconds).padStart(2, '0');
-            document.getElementById('digitalTime').textContent = timeString;
+            const ms = now.getMilliseconds();
+            
+            const hourDeg = ((hours % 12) * 30) + (minutes * 0.5);
+            const minuteDeg = (minutes * 6) + (seconds * 0.1);
+            const secondDeg = (seconds * 6) + (ms * 0.006);
+            
+            document.getElementById('hourHand').style.transform = `rotate(${hourDeg}deg)`;
+            document.getElementById('minuteHand').style.transform = `rotate(${minuteDeg}deg)`;
+            document.getElementById('secondHand').style.transform = `rotate(${secondDeg}deg)`;
+            
+            const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            document.getElementById('digitalClock').textContent = timeStr;
+            
             const year = now.getFullYear();
             const month = now.getMonth() + 1;
             const day = now.getDate();
-            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            document.getElementById('dateText').textContent = year+年+month+月+day+日;
-            document.getElementById('weekdayText').textContent = weekdays[now.getDay()];
-            requestAnimationFrame(updateClock);
+            const weekNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            
+            document.getElementById('dateText').textContent = `${year}年${month}月${day}日`;
+            document.getElementById('weekdayText').textContent = weekNames[now.getDay()];
+
+            requestAnimationFrame(renderClock);
         }
+
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => { console.log(Error: +err.message); });
+                document.documentElement.requestFullscreen().catch(e => console.log(e));
             } else {
                 document.exitFullscreen();
             }
         }
-        function updateBrandText(text) {
-            document.getElementById('brandText').textContent = text;
-            localStorage.setItem('clock_custom_brand', text);
+
+        function updateBrandText(val) {
+            document.getElementById('brandLabel').textContent = val;
+            localStorage.setItem('clock_custom_brand', val);
         }
-        function toggleElement(elementId, isVisible) {
-            const el = document.getElementById(elementId);
+
+        function toggleElement(id, visible) {
+            const el = document.getElementById(id);
             if (!el) return;
-            if (isVisible) { el.classList.remove('is-hidden'); } else { el.classList.add('is-hidden'); }
-            localStorage.setItem('clock_show_' + elementId, isVisible);
+            if (visible) el.classList.remove('is-hidden');
+            else el.classList.add('is-hidden');
+            localStorage.setItem('clock_show_' + id, visible);
         }
-        function loadSettings() {
+
+        function initSettings() {
             const items = [
-                { id: 'digitalTime', checkboxId: 'toggleDigital' },
-                { id: 'clockContainer', checkboxId: 'toggleClock' },
-                { id: 'dateText', checkboxId: 'toggleDate' },
-                { id: 'weekdayText', checkboxId: 'toggleWeekday' },
-                { id: 'brandText', checkboxId: 'toggleBrand' }
+                { id: 'digitalClock', chk: 'chkDigital' },
+                { id: 'clockBox', chk: 'chkClock' },
+                { id: 'dateText', chk: 'chkDate' },
+                { id: 'weekdayText', chk: 'chkWeekday' },
+                { id: 'brandLabel', chk: 'chkBrand' }
             ];
+
             items.forEach(item => {
                 const saved = localStorage.getItem('clock_show_' + item.id);
                 if (saved !== null) {
                     const isVisible = saved === 'true';
-                    document.getElementById(item.checkboxId).checked = isVisible;
+                    document.getElementById(item.chk).checked = isVisible;
                     toggleElement(item.id, isVisible);
                 }
             });
+
             const savedBrand = localStorage.getItem('clock_custom_brand');
             if (savedBrand !== null) {
                 document.getElementById('brandInput').value = savedBrand;
-                document.getElementById('brandText').textContent = savedBrand;
+                document.getElementById('brandLabel').textContent = savedBrand;
             }
         }
-        function toggleSettingsPanel(e) {
+
+        function toggleSettings(e) {
             e.stopPropagation();
-            document.getElementById('settingsPanel').classList.toggle('active');
+            document.getElementById('settingsCard').classList.toggle('active');
         }
+
         document.addEventListener('click', (e) => {
-            const panel = document.getElementById('settingsPanel');
-            if (panel.classList.contains('active') && !e.target.closest('.settings-container')) {
-                panel.classList.remove('active');
+            const card = document.getElementById('settingsCard');
+            if (card.classList.contains('active') && !e.target.closest('.settings-wrapper')) {
+                card.classList.remove('active');
             }
         });
-        initClockNumbers();
-        loadSettings();
-        requestAnimationFrame(updateClock);
-        document.addEventListener('fullscreenchange', () => {
-            const btn = document.querySelector('.fullscreen-btn');
-            if (document.fullscreenElement) {
-                btn.innerHTML = <svg class="fullscreen-icon" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>;
-            } else {
-                btn.innerHTML = <svg class="fullscreen-icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>;
-            }
-        });
+
+        buildClockFace();
+        initSettings();
+        requestAnimationFrame(renderClock);
     </script>
 </body>
 </html>
