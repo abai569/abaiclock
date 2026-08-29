@@ -347,17 +347,17 @@ class AnalogClockPainter extends CustomPainter {
     final second = now.second;
     final millisecond = now.millisecond;
 
-    // 时针 (粗圆角)
+    // 时针 (88px / 160半径 = 0.55)
     final hourAngle = (hour * 30 + minute * 0.5) * pi / 180;
-    _drawHand(canvas, center, radius * 0.26, hourAngle, 7, const Color(0xFFf1ebd9));
+    _drawHand(canvas, center, radius * 0.55, hourAngle, 7, const Color(0xFFf1ebd9));
 
-    // 分针
+    // 分针 (138px / 160半径 = 0.86)
     final minuteAngle = (minute * 6 + second * 0.1) * pi / 180;
-    _drawHand(canvas, center, radius * 0.38, minuteAngle, 5, const Color(0xFFf1ebd9));
+    _drawHand(canvas, center, radius * 0.86, minuteAngle, 5, const Color(0xFFf1ebd9));
 
-    // 秒针 (细长，末端有圆点)
+    // 秒针 (168px / 160半径 = 1.05，细长)
     final secondAngle = (second * 6 + millisecond * 0.006) * pi / 180;
-    _drawSecondHand(canvas, center, radius * 0.52, secondAngle);
+    _drawSecondHand(canvas, center, radius * 1.0, secondAngle);
 
     // 中心铆钉 (金色圆环)
     final centerOuterPaint = Paint()..color = const Color(0xFFcaa055);
