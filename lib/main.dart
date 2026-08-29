@@ -313,8 +313,8 @@ class AnalogClockPainter extends CustomPainter {
     );
     for (int i = 1; i <= 12; i++) {
       final angle = (i * 30 - 90) * pi / 180;
-      final x = center.dx + (radius - 50) * cos(angle);
-      final y = center.dy + (radius - 50) * sin(angle);
+      final x = center.dx + (radius - 22) * cos(angle);
+      final y = center.dy + (radius - 22) * sin(angle);
       
       textPainter.text = TextSpan(
         text: '$i',
