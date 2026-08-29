@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>北京时间 - 模拟时钟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow: hidden;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            margin-bottom: 5px;
+        }
+
+        .digital-time {
+            font-size: 3.5rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 5px;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+        }
+
+        .clock-face {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #2c3e50 0%, #1a1a2e 100%);
+            border: 8px solid #d4af37;
+            box-shadow: 
+                0 0 50px rgba(212, 175, 55, 0.3),
+                inset 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .clock-number-slot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .clock-number {
+            display: inline-block;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 12px;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 26%;
+            background: #fff;
+            margin-left: -4px;
+        }
+
+        .minute-hand {
+            width: 6px;
+            height: 36%;
+            background: #fff;
+            margin-left: -3px;
+        }
+
+        .second-hand {
+            width: 3px;
+            height: 42%;
+            background: #ff6b6b;
+            margin-left: -1.5px;
+        }
+
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: #d4af37;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .brand-text {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            max-width: 80%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .info-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .fullscreen-icon {
+            width: 20px;
+            height: 20px;
+            stroke: #fff;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .settings-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .settings-toggle-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .settings-toggle-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-panel {
+            position: absolute;
+            bottom: 36px;
+            right: 0;
+            background: rgba(22, 33, 62, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .settings-panel.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-item input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #d4af37;
+            width: 15px;
+            height: 15px;
+        }
+
+        .brand-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 2px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-top: 8px;
+        }
+
+        .brand-input-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .brand-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 4px 8px;
+            color: #fff;
+            font-size: 0.8rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .brand-input:focus {
+            border-color: #d4af37;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .is-hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 1.8rem; }
+            .digital-time { font-size: 2.5rem; }
+            .clock-container { width: 280px; height: 280px; }
+            .clock-number { font-size: 1.5rem; margin-top: 8px; }
+            .info-group { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">北京时间</h1>
+        <div class="digital-time" id="digitalTime">00:00:00</div>
+        <div class="clock-container" id="clockContainer">
+            <div class="clock-face" id="clockFace">
+                <div class="brand-text" id="brandText">ANALOGUECLOCK</div>
+                <div class="hand hour-hand" id="hourHand"></div>
+                <div class="hand minute-hand" id="minuteHand"></div>
+                <div class="hand second-hand" id="secondHand"></div>
+                <div class="center-dot"></div>
+            </div>
+        </div>
+        <div class="info-group">
+            <div id="dateText">加载中...</div>
+            <div id="weekdayText"></div>
+        </div>
+    </div>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="全屏">
+        <svg class="fullscreen-icon" viewBox="0 0 24 24">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+    </button>
+    <div class="settings-container">
+        <div class="settings-panel" id="settingsPanel">
+            <label class="toggle-item">
+                <span>数字时间</span>
+                <input type="checkbox" id="toggleDigital" checked onchange="toggleElement('digitalTime', this.checked)">
+            </label>
+            <label class="toggle-item">
+                <span>模拟表盘</span>
+                <input type="checkbox" id="toggleClock" checked onchange="toggleElement('clockContainer', this.checked)">
+            </label>
+            <label class="toggle-item">
+                <span>日期显示</span>
+                <input type="checkbox" id="toggleDate" checked onchange="toggleElement('dateText', this.checked)">
+            </label>
+            <label class="toggle-item">
+                <span>星期显示</span>
+                <input type="checkbox" id="toggleWeekday" checked onchange="toggleElement('weekdayText', this.checked)">
+            </label>
+            <label class="toggle-item">
+                <span>品牌标识</span>
+                <input type="checkbox" id="toggleBrand" checked onchange="toggleElement('brandText', this.checked)">
+            </label>
+            <div class="brand-input-container">
+                <span class="brand-input-label">自定义品牌标识</span>
+                <input type="text" class="brand-input" id="brandInput" value="ANALOGUECLOCK" placeholder="输入品牌文字..." oninput="updateBrandText(this.value)">
+            </div>
+        </div>
+        <button class="settings-toggle-btn" onclick="toggleSettingsPanel(event)" title="设置">⚙</button>
+    </div>
+    <script>
+        function initClockNumbers() {
+            const clockFace = document.getElementById('clockFace');
+            for (let i = 1; i <= 12; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'clock-number-slot';
+                const angle = i * 30;
+                slot.style.transform = otate(+angle+deg);
+                const number = document.createElement('div');
+                number.className = 'clock-number';
+                number.textContent = i;
+                number.style.transform = otate(-+angle+deg);
+                slot.appendChild(number);
+                clockFace.appendChild(slot);
+            }
+        }
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const milliseconds = now.getMilliseconds();
+            const hourAngle = ((hours % 12) * 30) + (minutes * 0.5);
+            const minuteAngle = (minutes * 6) + (seconds * 0.1);
+            const secondAngle = (seconds * 6) + (milliseconds * 0.006);
+            document.getElementById('hourHand').style.transform = otate(+hourAngle+deg);
+            document.getElementById('minuteHand').style.transform = otate(+minuteAngle+deg);
+            document.getElementById('secondHand').style.transform = otate(+secondAngle+deg);
+            const timeString = String(hours).padStart(2, '0')+:+String(minutes).padStart(2, '0')+:+String(seconds).padStart(2, '0');
+            document.getElementById('digitalTime').textContent = timeString;
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            document.getElementById('dateText').textContent = year+年+month+月+day+日;
+            document.getElementById('weekdayText').textContent = weekdays[now.getDay()];
+            requestAnimationFrame(updateClock);
+        }
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => { console.log(Error: +err.message); });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        function updateBrandText(text) {
+            document.getElementById('brandText').textContent = text;
+            localStorage.setItem('clock_custom_brand', text);
+        }
+        function toggleElement(elementId, isVisible) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (isVisible) { el.classList.remove('is-hidden'); } else { el.classList.add('is-hidden'); }
+            localStorage.setItem('clock_show_' + elementId, isVisible);
+        }
+        function loadSettings() {
+            const items = [
+                { id: 'digitalTime', checkboxId: 'toggleDigital' },
+                { id: 'clockContainer', checkboxId: 'toggleClock' },
+                { id: 'dateText', checkboxId: 'toggleDate' },
+                { id: 'weekdayText', checkboxId: 'toggleWeekday' },
+                { id: 'brandText', checkboxId: 'toggleBrand' }
+            ];
+            items.forEach(item => {
+                const saved = localStorage.getItem('clock_show_' + item.id);
+                if (saved !== null) {
+                    const isVisible = saved === 'true';
+                    document.getElementById(item.checkboxId).checked = isVisible;
+                    toggleElement(item.id, isVisible);
+                }
+            });
+            const savedBrand = localStorage.getItem('clock_custom_brand');
+            if (savedBrand !== null) {
+                document.getElementById('brandInput').value = savedBrand;
+                document.getElementById('brandText').textContent = savedBrand;
+            }
+        }
+        function toggleSettingsPanel(e) {
+            e.stopPropagation();
+            document.getElementById('settingsPanel').classList.toggle('active');
+        }
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('settingsPanel');
+            if (panel.classList.contains('active') && !e.target.closest('.settings-container')) {
+                panel.classList.remove('active');
+            }
+        });
+        initClockNumbers();
+        loadSettings();
+        requestAnimationFrame(updateClock);
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.querySelector('.fullscreen-btn');
+            if (document.fullscreenElement) {
+                btn.innerHTML = <svg class="fullscreen-icon" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>;
+            } else {
+                btn.innerHTML = <svg class="fullscreen-icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>;
+            }
+        });
+    </script>
+</body>
+</html>
