@@ -16,6 +16,28 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      
+      # 创建固定的签名密钥
+      - name: Create signing keystore
+        run: |
+          keytool -genkey -v -keystore android/app/abaiclock.jks \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -alias abaiclock \
+            -storepass abaiclock123 \
+            -keypass abaiclock123 \
+            -dname "CN=abaiclock, OU=dev, O=abaiclock, L=Beijing, ST=Beijing, C=CN"
+          
+          cat > android/app/key.properties <<EOF
+          storeFile=abaiclock.jks
+          storePassword=abaiclock123
+          keyAlias=abaiclock
+          keyPassword=abaiclock123
+          EOF
+      
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
