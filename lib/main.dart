@@ -345,7 +345,7 @@ class AnalogClockPainter extends CustomPainter {
     final hour = now.hour % 12;
     final minute = now.minute;
     final second = now.second;
-    final millisecond = now.getMillisecondsSinceEpoch() % 1000;
+    final millisecond = now.millisecond;
 
     // 时针 (粗圆角)
     final hourAngle = (hour * 30 + minute * 0.5) * pi / 180;
