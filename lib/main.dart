@@ -351,13 +351,13 @@ class AnalogClockPainter extends CustomPainter {
     final hourAngle = (hour * 30 + minute * 0.5) * pi / 180;
     _drawHand(canvas, center, radius * 0.55, hourAngle, 7, const Color(0xFFf1ebd9));
 
-    // 分针 (138px / 160半径 = 0.86)
+    // 分针 (128px / 160半径 = 0.8)
     final minuteAngle = (minute * 6 + second * 0.1) * pi / 180;
-    _drawHand(canvas, center, radius * 0.86, minuteAngle, 5, const Color(0xFFf1ebd9));
+    _drawHand(canvas, center, radius * 0.8, minuteAngle, 5, const Color(0xFFf1ebd9));
 
-    // 秒针 (168px / 160半径 = 1.05，细长)
+    // 秒针 (158px / 160半径 = 0.99)
     final secondAngle = (second * 6 + millisecond * 0.006) * pi / 180;
-    _drawSecondHand(canvas, center, radius * 1.0, secondAngle);
+    _drawSecondHand(canvas, center, radius * 0.99, secondAngle);
 
     // 中心铆钉 (金色圆环)
     final centerOuterPaint = Paint()..color = const Color(0xFFcaa055);
@@ -396,10 +396,10 @@ class AnalogClockPainter extends CustomPainter {
     
     canvas.drawLine(center, endPoint, paint);
     
-    // 末端红色圆点 (8px直径, 在top:30px位置)
+    // 末端红色圆点 (8px直径, 在top:46px位置)
     final dotPaint = Paint()..color = const Color(0xFFe0524c);
-    // 计算红点位置：从秒针末端往回30px
-    final dotOffset = 30.0;
+    // 计算红点位置：从秒针末端往回46px
+    final dotOffset = 46.0;
     final dotPoint = Offset(
       endPoint.dx - dotOffset * sin(angle),
       endPoint.dy + dotOffset * cos(angle),
