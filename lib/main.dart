@@ -254,7 +254,7 @@ class _ClockPageState extends State<ClockPage> {
       title: Text(label, style: const TextStyle(color: Colors.white)),
       trailing: Switch(
         value: value,
-        activeColor: const Color(0xFFd4af37),
+        activeTrackColor: const Color(0xFFd4af37),
         onChanged: onChanged,
       ),
       contentPadding: EdgeInsets.zero,
