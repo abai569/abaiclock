@@ -21,8 +21,17 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       
-      # 创建固定的签名密钥
+      # 恢复缓存的 keystore
+      - name: Restore keystore cache
+        id: keystore-cache
+        uses: actions/cache@v4
+        with:
+          path: android/app/abaiclock.jks
+          key: abaiclock-keystore-v1
+      
+      # 如果没有缓存，创建新密钥
       - name: Create signing keystore
+        if: steps.keystore-cache.outputs.cache-hit != 'true'
         run: |
           keytool -genkey -v -keystore android/app/abaiclock.jks \
             -keyalg RSA -keysize 2048 -validity 10000 \
@@ -30,7 +39,9 @@ jobs:
             -storepass abaiclock123 \
             -keypass abaiclock123 \
             -dname "CN=abaiclock, OU=dev, O=abaiclock, L=Beijing, ST=Beijing, C=CN"
-          
+      
+      # 创建 key.properties
+      - run: |
           cat > android/app/key.properties <<EOF
           storeFile=abaiclock.jks
           storePassword=abaiclock123
