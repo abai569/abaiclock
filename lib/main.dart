@@ -163,18 +163,6 @@ class _ClockPageState extends State<ClockPage> {
                 ),
               ),
               
-              // 全屏按钮
-              Positioned(
-                top: 20,
-                right: 20,
-                child: IconButton(
-                  icon: const Icon(Icons.fullscreen, color: Colors.white54, size: 28),
-                  onPressed: () {
-                    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-                  },
-                ),
-              ),
-              
               // 设置按钮
               Positioned(
                 bottom: 20,
@@ -276,22 +264,47 @@ class AnalogClockPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 8;
+    final radius = size.width / 2 - 12;
 
     // 绘制表盘背景
     final bgPaint = Paint()
       ..shader = RadialGradient(
         center: Alignment.center,
-        colors: [const Color(0xFF2c3e50), const Color(0xFF1a1a2e)],
+        colors: [const Color(0xFF2c3e50), const Color(0xFF0d0d10)],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
     canvas.drawCircle(center, radius, bgPaint);
 
-    // 绘制金色边框
+    // 绘制金色边框 (6px)
     final borderPaint = Paint()
-      ..color = const Color(0xFFd4af37)
+      ..color = const Color(0xFFcaa055)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
+      ..strokeWidth = 6;
     canvas.drawCircle(center, radius, borderPaint);
+
+    // 绘制60个刻度线
+    for (int i = 0; i < 60; i++) {
+      final angle = i * 6 * pi / 180;
+      final isMajor = i % 5 == 0;
+      
+      final tickPaint = Paint()
+        ..color = isMajor ? const Color(0xFFcaa055) : const Color(0x55caa055)
+        ..strokeWidth = isMajor ? 2.5 : 1
+        ..style = PaintingStyle.stroke;
+      
+      final innerRadius = radius - (isMajor ? 15 : 10);
+      final outerRadius = radius - 5;
+      
+      final innerPoint = Offset(
+        center.dx + innerRadius * cos(angle - pi/2),
+        center.dy + innerRadius * sin(angle - pi/2),
+      );
+      final outerPoint = Offset(
+        center.dx + outerRadius * cos(angle - pi/2),
+        center.dy + outerRadius * sin(angle - pi/2),
+      );
+      
+      canvas.drawLine(innerPoint, outerPoint, tickPaint);
+    }
 
     // 绘制数字
     final textPainter = TextPainter(
@@ -300,14 +313,14 @@ class AnalogClockPainter extends CustomPainter {
     );
     for (int i = 1; i <= 12; i++) {
       final angle = (i * 30 - 90) * pi / 180;
-      final x = center.dx + (radius - 40) * cos(angle);
-      final y = center.dy + (radius - 40) * sin(angle);
+      final x = center.dx + (radius - 50) * cos(angle);
+      final y = center.dy + (radius - 50) * sin(angle);
       
       textPainter.text = TextSpan(
         text: '$i',
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 32,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
         ),
       );
@@ -320,8 +333,8 @@ class AnalogClockPainter extends CustomPainter {
       textPainter.text = TextSpan(
         text: brandText.toUpperCase(),
         style: const TextStyle(
-          color: Color(0x88FFFFFF),
-          fontSize: 14,
+          color: Color(0x20FFFFFF),
+          fontSize: 12,
           letterSpacing: 3,
         ),
       );
@@ -332,28 +345,26 @@ class AnalogClockPainter extends CustomPainter {
     final hour = now.hour % 12;
     final minute = now.minute;
     final second = now.second;
-    final millisecond = now.millisecond;
+    final millisecond = now.getMillisecondsSinceEpoch() % 1000;
 
-    // 时针
+    // 时针 (粗圆角)
     final hourAngle = (hour * 30 + minute * 0.5) * pi / 180;
-    _drawHand(canvas, center, radius * 0.26, hourAngle, 8, Colors.white);
+    _drawHand(canvas, center, radius * 0.26, hourAngle, 7, const Color(0xFFf1ebd9));
 
     // 分针
     final minuteAngle = (minute * 6 + second * 0.1) * pi / 180;
-    _drawHand(canvas, center, radius * 0.36, minuteAngle, 6, Colors.white);
+    _drawHand(canvas, center, radius * 0.38, minuteAngle, 5, const Color(0xFFf1ebd9));
 
-    // 秒针
+    // 秒针 (细长，末端有圆点)
     final secondAngle = (second * 6 + millisecond * 0.006) * pi / 180;
-    _drawHand(canvas, center, radius * 0.42, secondAngle, 3, const Color(0xFFff6b6b));
+    _drawSecondHand(canvas, center, radius * 0.52, secondAngle);
 
-    // 中心点
-    final centerDotPaint = Paint()..color = const Color(0xFFd4af37);
-    canvas.drawCircle(center, 8, centerDotPaint);
+    // 中心铆钉 (金色圆环)
+    final centerOuterPaint = Paint()..color = const Color(0xFFcaa055);
+    canvas.drawCircle(center, 7.5, centerOuterPaint);
     
-    final centerDotGlow = Paint()
-      ..color = const Color(0x44d4af37)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    canvas.drawCircle(center, 12, centerDotGlow);
+    final centerInnerPaint = Paint()..color = const Color(0xFF0d0d10);
+    canvas.drawCircle(center, 2.5, centerInnerPaint);
   }
 
   void _drawHand(Canvas canvas, Offset center, double length, double angle, double width, Color color) {
@@ -369,6 +380,25 @@ class AnalogClockPainter extends CustomPainter {
     );
     
     canvas.drawLine(center, endPoint, paint);
+  }
+
+  void _drawSecondHand(Canvas canvas, Offset center, double length, double angle) {
+    final paint = Paint()
+      ..color = const Color(0xFFe0524c)
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    
+    final endPoint = Offset(
+      center.dx + length * sin(angle),
+      center.dy - length * cos(angle),
+    );
+    
+    canvas.drawLine(center, endPoint, paint);
+    
+    // 末端红色圆点
+    final dotPaint = Paint()..color = const Color(0xFFe0524c);
+    canvas.drawCircle(endPoint, 4.5, dotPaint);
   }
 
   @override
