@@ -17,65 +17,65 @@
         android:strokeColor="#caa055"
         android:strokeWidth="2"/>
     
-    <!-- 12个刻度线 -->
-    <!-- 12点 -->
+    <!-- 12个刻度线（等分30度） -->
+    <!-- 0度 12点 -->
     <path android:pathData="M54,30L54,33" android:strokeColor="#caa055" android:strokeWidth="1.5" android:strokeLineCap="round"/>
-    <!-- 1点 -->
-    <path android:pathData="M62,30.5L60.5,33" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 2点 -->
-    <path android:pathData="M70,38L68,39.5" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 3点 -->
+    <!-- 30度 1点 -->
+    <path android:pathData="M66,33L64.5,35" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 60度 2点 -->
+    <path android:pathData="M75,42L73,43" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 90度 3点 -->
     <path android:pathData="M78,54L75,54" android:strokeColor="#caa055" android:strokeWidth="1.5" android:strokeLineCap="round"/>
-    <!-- 4点 -->
-    <path android:pathData="M70,70L68,68.5" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 5点 -->
-    <path android:pathData="M62,77.5L60.5,75" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 6点 -->
+    <!-- 120度 4点 -->
+    <path android:pathData="M75,66L73,65" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 150度 5点 -->
+    <path android:pathData="M66,75L64.5,73" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 180度 6点 -->
     <path android:pathData="M54,78L54,75" android:strokeColor="#caa055" android:strokeWidth="1.5" android:strokeLineCap="round"/>
-    <!-- 7点 -->
-    <path android:pathData="M46,77.5L47.5,75" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 8点 -->
-    <path android:pathData="M38,70L40,68.5" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 9点 -->
+    <!-- 210度 7点 -->
+    <path android:pathData="M42,75L43.5,73" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 240度 8点 -->
+    <path android:pathData="M33,66L35,65" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 270度 9点 -->
     <path android:pathData="M30,54L33,54" android:strokeColor="#caa055" android:strokeWidth="1.5" android:strokeLineCap="round"/>
-    <!-- 10点 -->
-    <path android:pathData="M38,38L40,39.5" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
-    <!-- 11点 -->
-    <path android:pathData="M46,30.5L47.5,33" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 300度 10点 -->
+    <path android:pathData="M33,42L35,43" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
+    <!-- 330度 11点 -->
+    <path android:pathData="M42,33L43.5,35" android:strokeColor="#caa055" android:strokeWidth="1" android:strokeLineCap="round"/>
     
-    <!-- 时针：6点15分 -->
+    <!-- 时针：6点15分方向（短粗） -->
     <path
         android:pathData="M54,54L52,66"
         android:strokeColor="#f1ebd9"
         android:strokeWidth="3"
         android:strokeLineCap="round"/>
     
-    <!-- 分针：15分 -->
+    <!-- 分针：15分指向3点（160px比例） -->
     <path
         android:pathData="M54,54L74,54"
         android:strokeColor="#f1ebd9"
         android:strokeWidth="1.5"
         android:strokeLineCap="round"/>
     
-    <!-- 秒针主体：从中心向外164px方向（35秒=7点方向） -->
+    <!-- 秒针主体：35秒方向（160px比例） -->
     <path
         android:pathData="M54,54L42,76"
         android:strokeColor="#e0524c"
         android:strokeWidth="1"
         android:strokeLineCap="round"/>
     
-    <!-- 秒针尾巴：等粗10px -->
+    <!-- 秒针等粗尾巴：30px，1px粗 -->
     <path
-        android:pathData="M54,54L56,50"
+        android:pathData="M54,54L60,42"
         android:strokeColor="#e0524c"
         android:strokeWidth="1"
         android:strokeLineCap="round"/>
     
-    <!-- 秒针尾巴：粗一号30px -->
+    <!-- 秒针粗尾巴：20px，2.5px粗 -->
     <path
-        android:pathData="M56,50L62,38"
+        android:pathData="M60,42L64,34"
         android:strokeColor="#e0524c"
-        android:strokeWidth="2"
+        android:strokeWidth="2.5"
         android:strokeLineCap="round"/>
     
     <!-- 中心点 -->

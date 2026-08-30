@@ -378,13 +378,13 @@ class AnalogClockPainter extends CustomPainter {
     final hourAngle = (hour * 30 + minute * 0.5) * pi / 180;
     _drawHand(canvas, center, radius * 0.55, hourAngle, 7, const Color(0xFFf1ebd9));
 
-    // 分针 164px (radius * 0.8)
+    // 分针 160px (radius * 0.914)
     final minuteAngle = (minute * 6 + second * 0.1) * pi / 180;
-    _drawHand(canvas, center, radius * 0.8, minuteAngle, 5, const Color(0xFFf1ebd9));
+    _drawHand(canvas, center, radius * 0.914, minuteAngle, 5, const Color(0xFFf1ebd9));
 
-    // 秒针 164px (radius * 0.99)，跳动模式
+    // 秒针 160px (radius * 0.914)，跳动模式
     final secondAngle = second * 6 * pi / 180;
-    _drawSecondHand(canvas, center, radius * 0.99, secondAngle);
+    _drawSecondHand(canvas, center, radius * 0.914, secondAngle);
 
     // 中心铆钉 (金色圆环)
     final centerOuterPaint = Paint()..color = const Color(0xFFcaa055);
@@ -416,29 +416,29 @@ class AnalogClockPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     
-    // 主体：从中心向外
+    // 主体：从中心向外160px
     final endPoint = Offset(
       center.dx + length * sin(angle),
       center.dy - length * cos(angle),
     );
     canvas.drawLine(center, endPoint, mainPaint);
     
-    // 等粗尾巴：从中心向后10px
+    // 等粗尾巴：从中心向后30px，1px粗
     final tail1End = Offset(
-      center.dx - 10 * sin(angle),
-      center.dy + 10 * cos(angle),
+      center.dx - 30 * sin(angle),
+      center.dy + 30 * cos(angle),
     );
     canvas.drawLine(center, tail1End, mainPaint);
     
-    // 粗一号尾巴：从等粗尾巴末端再延长30px
+    // 粗尾巴：从等粗尾巴末端再延长20px，2.5px粗
     final tail2Paint = Paint()
       ..color = const Color(0xFFe0524c)
-      ..strokeWidth = 2
+      ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     final tail2End = Offset(
-      tail1End.dx - 30 * sin(angle),
-      tail1End.dy + 30 * cos(angle),
+      tail1End.dx - 20 * sin(angle),
+      tail1End.dy + 20 * cos(angle),
     );
     canvas.drawLine(tail1End, tail2End, tail2Paint);
     
