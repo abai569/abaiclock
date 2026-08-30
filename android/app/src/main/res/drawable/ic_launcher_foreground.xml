@@ -65,16 +65,16 @@
         android:pathData="M35,54m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
         android:fillColor="#ffffff"/>
     
-    <!-- 时针 -->
+    <!-- 时针（短粗） -->
     <path
-        android:pathData="M54,54L54,40"
+        android:pathData="M54,54L54,42"
         android:strokeColor="#f1ebd9"
         android:strokeWidth="3"
         android:strokeLineCap="round"/>
     
-    <!-- 分针 -->
+    <!-- 分针（长细） -->
     <path
-        android:pathData="M54,54L66,54"
+        android:pathData="M54,54L54,34"
         android:strokeColor="#f1ebd9"
         android:strokeWidth="1.5"
         android:strokeLineCap="round"/>
