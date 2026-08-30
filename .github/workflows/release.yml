@@ -21,38 +21,28 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       
-      # 恢复缓存的 keystore
-      - name: Restore keystore cache
-        id: keystore-cache
-        uses: actions/cache@v4
-        with:
-          path: android/app/abaiclock.jks
-          key: abaiclock-keystore-v1
-      
-      # 如果没有缓存，创建新密钥
-      - name: Create signing keystore
-        if: steps.keystore-cache.outputs.cache-hit != 'true'
+      # 恢复 keystore
+      - name: Restore keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          keytool -genkey -v -keystore android/app/abaiclock.jks \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -alias abaiclock \
-            -storepass abaiclock123 \
-            -keypass abaiclock123 \
-            -dname "CN=abaiclock, OU=dev, O=abaiclock, L=Beijing, ST=Beijing, C=CN"
-      
-      # 创建 key.properties
-      - run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/abaiclock.p12
           cat > android/app/key.properties <<EOF
-          storeFile=abaiclock.jks
-          storePassword=abaiclock123
-          keyAlias=abaiclock
-          keyPassword=abaiclock123
+          storeFile=abaiclock.p12
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          storeType=pkcs12
           EOF
       
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --release --split-per-abi
+      
       - name: Rename APKs
         shell: bash
         run: |
@@ -63,6 +53,7 @@ jobs:
               mv "$src" "$dst"
             fi
           done
+      
       - uses: softprops/action-gh-release@v2
         with:
           files: build/app/outputs/flutter-apk/abaiclock-${{ github.ref_name }}-*.apk
