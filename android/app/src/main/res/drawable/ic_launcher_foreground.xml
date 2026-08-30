@@ -69,14 +69,14 @@
     <path
         android:pathData="M54,54L54,40"
         android:strokeColor="#f1ebd9"
-        android:strokeWidth="2.5"
+        android:strokeWidth="3"
         android:strokeLineCap="round"/>
     
     <!-- 分针 -->
     <path
         android:pathData="M54,54L66,54"
         android:strokeColor="#f1ebd9"
-        android:strokeWidth="2"
+        android:strokeWidth="1.5"
         android:strokeLineCap="round"/>
     
     <!-- 秒针 -->
