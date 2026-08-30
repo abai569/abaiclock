@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>您的本地时间 - Analogue Clock</title>
+    <title>阿白时钟</title>
     <style>
         * {
             margin: 0;
@@ -141,7 +141,7 @@
             transform-origin: center calc(100% - 15px);
         }
 
-        /* 秒针与末端小球 */
+        /* 秒针 */
         .second-hand {
             width: 1px;
             height: 168px;
@@ -152,10 +152,24 @@
             z-index: 12;
         }
 
+        /* 秒针粗尾巴 */
+        .second-tail {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background: #e0524c;
+            margin-left: -1px;
+            transform-origin: top center;
+            z-index: 12;
+        }
+
+        /* 秒针红点 top:50px（从末端往回50px） */
         .second-hand::after {
             content: '';
             position: absolute;
-            top: 30px;
+            top: 50px;
             left: 50%;
             transform: translateX(-50%);
             width: 8px;
@@ -337,6 +351,7 @@
                 <div class="hand hour-hand" id="hourHand"></div>
                 <div class="hand minute-hand" id="minuteHand"></div>
                 <div class="hand second-hand" id="secondHand"></div>
+                <div class="hand second-tail" id="secondTail"></div>
                 
                 <div class="center-cap-outer">
                     <div class="center-cap-inner"></div>
@@ -417,15 +432,15 @@
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
-            const ms = now.getMilliseconds();
             
             const hourDeg = ((hours % 12) * 30) + (minutes * 0.5);
             const minuteDeg = (minutes * 6) + (seconds * 0.1);
-            const secondDeg = (seconds * 6) + (ms * 0.006);
+            const secondDeg = seconds * 6;
             
             document.getElementById('hourHand').style.transform = `rotate(${hourDeg}deg)`;
             document.getElementById('minuteHand').style.transform = `rotate(${minuteDeg}deg)`;
             document.getElementById('secondHand').style.transform = `rotate(${secondDeg}deg)`;
+            document.getElementById('secondTail').style.transform = `rotate(${secondDeg}deg)`;
             
             const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
             document.getElementById('digitalClock').textContent = timeStr;
