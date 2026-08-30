@@ -49,7 +49,7 @@ class _ClockPageState extends State<ClockPage> {
   void initState() {
     super.initState();
     _loadSettings();
-    _timer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         _now = DateTime.now();
       });
@@ -373,19 +373,18 @@ class AnalogClockPainter extends CustomPainter {
     final hour = now.hour % 12;
     final minute = now.minute;
     final second = now.second;
-    final millisecond = now.millisecond;
 
-    // 时针 (88px / 160半径 = 0.55)
+    // 时针 128px (radius * 0.55)
     final hourAngle = (hour * 30 + minute * 0.5) * pi / 180;
     _drawHand(canvas, center, radius * 0.55, hourAngle, 7, const Color(0xFFf1ebd9));
 
-    // 分针 (108px / 160半径 = 0.675)
+    // 分针 164px (radius * 0.8)
     final minuteAngle = (minute * 6 + second * 0.1) * pi / 180;
-    _drawHand(canvas, center, radius * 0.675, minuteAngle, 5, const Color(0xFFf1ebd9));
+    _drawHand(canvas, center, radius * 0.8, minuteAngle, 5, const Color(0xFFf1ebd9));
 
-    // 秒针 (150px / 160半径 = 0.94)
-    final secondAngle = (second * 6 + millisecond * 0.006) * pi / 180;
-    _drawSecondHand(canvas, center, radius * 0.94, secondAngle);
+    // 秒针 164px (radius * 0.99)，跳动模式
+    final secondAngle = second * 6 * pi / 180;
+    _drawSecondHand(canvas, center, radius * 0.99, secondAngle);
 
     // 中心铆钉 (金色圆环)
     final centerOuterPaint = Paint()..color = const Color(0xFFcaa055);
@@ -411,33 +410,50 @@ class AnalogClockPainter extends CustomPainter {
   }
 
   void _drawSecondHand(Canvas canvas, Offset center, double length, double angle) {
-    final paint = Paint()
+    final mainPaint = Paint()
       ..color = const Color(0xFFe0524c)
-      ..strokeWidth = 1  // 1px宽
+      ..strokeWidth = 1
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
     
+    // 主体：从中心向外
     final endPoint = Offset(
       center.dx + length * sin(angle),
       center.dy - length * cos(angle),
     );
+    canvas.drawLine(center, endPoint, mainPaint);
     
-    canvas.drawLine(center, endPoint, paint);
+    // 等粗尾巴：从中心向后10px
+    final tail1End = Offset(
+      center.dx - 10 * sin(angle),
+      center.dy + 10 * cos(angle),
+    );
+    canvas.drawLine(center, tail1End, mainPaint);
     
-    // 末端红色圆点 (8px直径, 在top:42px位置)
+    // 粗一号尾巴：从等粗尾巴末端再延长30px
+    final tail2Paint = Paint()
+      ..color = const Color(0xFFe0524c)
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+    final tail2End = Offset(
+      tail1End.dx - 30 * sin(angle),
+      tail1End.dy + 30 * cos(angle),
+    );
+    canvas.drawLine(tail1End, tail2End, tail2Paint);
+    
+    // 红点：top 50px（从末端往回50px）
     final dotPaint = Paint()..color = const Color(0xFFe0524c);
-    // 计算红点位置：从秒针末端往回42px
-    final dotOffset = 42.0;
     final dotPoint = Offset(
-      endPoint.dx - dotOffset * sin(angle),
-      endPoint.dy + dotOffset * cos(angle),
+      endPoint.dx - 50 * sin(angle),
+      endPoint.dy + 50 * cos(angle),
     );
     canvas.drawCircle(dotPoint, 4, dotPaint);
   }
 
   @override
   bool shouldRepaint(covariant AnalogClockPainter oldDelegate) {
-    return now.millisecond != oldDelegate.now.millisecond ||
+    return now.second != oldDelegate.now.second ||
            brandText != oldDelegate.brandText ||
            showBrand != oldDelegate.showBrand;
   }
