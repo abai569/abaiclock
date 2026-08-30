@@ -43,8 +43,6 @@ class _ClockPageState extends State<ClockPage> {
   bool _showWeekday = true;
   bool _showBrand = true;
   String _brandText = 'ANALOGUECLOCK';
-  bool _initialized = false;
-
   final List<String> _weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
   @override
@@ -67,7 +65,6 @@ class _ClockPageState extends State<ClockPage> {
       _showWeekday = prefs.getBool('showWeekday') ?? true;
       _showBrand = prefs.getBool('showBrand') ?? true;
       _brandText = prefs.getString('brandText') ?? 'ANALOGUECLOCK';
-      _initialized = true;
     });
   }
 
