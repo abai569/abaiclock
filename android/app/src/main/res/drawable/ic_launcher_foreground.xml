@@ -7,89 +7,93 @@
     
     <!-- 表盘背景 -->
     <path
-        android:pathData="M54,54m-38,0a38,38 0,1 1,76 0a38,38 0,1 1,-76 0"
+        android:pathData="M54,54m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0"
         android:fillColor="#0d0d10"/>
     
     <!-- 金色边框 -->
     <path
-        android:pathData="M54,54m-38,0a38,38 0,1 1,76 0a38,38 0,1 1,-76 0"
+        android:pathData="M54,54m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0"
         android:fillColor="@android:color/transparent"
         android:strokeColor="#caa055"
-        android:strokeWidth="3"/>
+        android:strokeWidth="2.5"/>
     
     <!-- 12点刻度 -->
     <path
-        android:pathData="M54,18L54,22"
+        android:pathData="M54,26L54,29"
         android:strokeColor="#caa055"
-        android:strokeWidth="2"/>
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
     
     <!-- 3点刻度 -->
     <path
-        android:pathData="M90,54L86,54"
+        android:pathData="M82,54L79,54"
         android:strokeColor="#caa055"
-        android:strokeWidth="2"/>
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
     
     <!-- 6点刻度 -->
     <path
-        android:pathData="M54,90L54,86"
+        android:pathData="M54,82L54,79"
         android:strokeColor="#caa055"
-        android:strokeWidth="2"/>
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
     
     <!-- 9点刻度 -->
     <path
-        android:pathData="M18,54L22,54"
+        android:pathData="M26,54L29,54"
         android:strokeColor="#caa055"
-        android:strokeWidth="2"/>
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
     
     <!-- 数字12 -->
     <path
-        android:pathData="M54,27m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:pathData="M54,35m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
         android:fillColor="#ffffff"/>
     
     <!-- 数字3 -->
     <path
-        android:pathData="M81,54m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:pathData="M73,54m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
         android:fillColor="#ffffff"/>
     
     <!-- 数字6 -->
     <path
-        android:pathData="M54,81m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:pathData="M54,73m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
         android:fillColor="#ffffff"/>
     
     <!-- 数字9 -->
     <path
-        android:pathData="M27,54m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:pathData="M35,54m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
         android:fillColor="#ffffff"/>
     
     <!-- 时针 -->
     <path
-        android:pathData="M54,54L54,34"
+        android:pathData="M54,54L54,40"
         android:strokeColor="#f1ebd9"
-        android:strokeWidth="3"
+        android:strokeWidth="2.5"
         android:strokeLineCap="round"/>
     
     <!-- 分针 -->
     <path
-        android:pathData="M54,54L70,54"
+        android:pathData="M54,54L66,54"
         android:strokeColor="#f1ebd9"
         android:strokeWidth="2"
         android:strokeLineCap="round"/>
     
     <!-- 秒针 -->
     <path
-        android:pathData="M54,54L54,74"
+        android:pathData="M54,54L54,68"
         android:strokeColor="#e0524c"
         android:strokeWidth="1"
         android:strokeLineCap="round"/>
     
     <!-- 秒针红点 -->
     <path
-        android:pathData="M54,72m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+        android:pathData="M54,66m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
         android:fillColor="#e0524c"/>
     
     <!-- 中心点 -->
     <path
-        android:pathData="M54,54m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+        android:pathData="M54,54m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0"
         android:fillColor="#caa055"/>
     
 </vector>
